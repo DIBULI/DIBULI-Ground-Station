@@ -25,11 +25,14 @@ include_directories(
   include
   ${libusb_INCLUDE_DIRS}
   ${GLM_INCLUDE_DIRS}
+  
   third_party/imgui
   third_party/imgui/backends
 )
 
 FILE(GLOB_RECURSE PROJECT_SOURCE_FILES 
+  src/contexts/**.cpp
+  src/views/**.cpp
   src/main.cpp
 )
 
