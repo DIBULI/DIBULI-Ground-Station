@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.2)
 
 project(as-mocap)
 
+enable_testing()
+
 list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/third_party/glfw/install")
 
 find_package(glfw3 REQUIRED)
@@ -21,7 +23,15 @@ set(GLM_DIR "${PROJECT_SOURCE_DIR}/third_party/glm/install")
 
 find_package(glm CONFIG REQUIRED PATHS "${GLM_DIR}")
 
-include_directories(
+FILE(GLOB_RECURSE PROJECT_SOURCE_FILES 
+  src/contexts/**.cpp
+  src/views/**.cpp
+  src/structs/**.cpp
+)
+
+add_library(dibuli_lib ${PROJECT_SOURCE_FILES})
+
+target_include_directories(dibuli_lib PUBLIC
   include
   ${libusb_INCLUDE_DIRS}
   ${GLM_INCLUDE_DIRS}
@@ -30,15 +40,11 @@ include_directories(
   third_party/imgui/backends
 )
 
-FILE(GLOB_RECURSE PROJECT_SOURCE_FILES 
-  src/contexts/**.cpp
-  src/views/**.cpp
-  src/main.cpp
-)
-
 find_package(OpenGL REQUIRED)
-add_executable(dibuli src/main.cpp ${PROJECT_SOURCE_FILES})
-target_link_libraries(dibuli ${libusb_LIBRARIES} imgui imgui_backend_glfw imgui_backend_opengl3 glfw glm::glm ${OPENGL_LIBRARIES})
+target_link_libraries(dibuli_lib ${libusb_LIBRARIES} imgui imgui_backend_glfw imgui_backend_opengl3 glfw glm::glm ${OPENGL_LIBRARIES})
+
+add_executable(dibuli src/main.cpp)
+target_link_libraries(dibuli dibuli_lib)
 
 if (WIN32)
   add_custom_command(TARGET dibuli
@@ -59,3 +65,9 @@ if (WIN32)
   )
 
 endif()
+
+
+add_executable(circular_byte_array_test tests/test_circular_byte_array.cpp)
+target_link_libraries(circular_byte_array_test dibuli_lib)
+add_test(NAME TestCircularByteArray
+         COMMAND circular_byte_array_test)
