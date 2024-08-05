@@ -24,6 +24,8 @@ public:
 
   std::shared_ptr<ApplicationContext> appctx;
   std::shared_ptr<UIContext> uictx;
+
+  int currentPortIndex = 0;
 };
 
 #endif /* MAIN_VIEW_HPP */

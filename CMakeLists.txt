@@ -38,13 +38,15 @@ target_include_directories(dibuli_lib PUBLIC
   ${libusb_INCLUDE_DIRS}
   ${GLM_INCLUDE_DIRS}
   ${CSerialPort_INCLUDE_DIR}
+
+  libs/DProtocol/include
   
   third_party/imgui
   third_party/imgui/backends
 )
 
 find_package(OpenGL REQUIRED)
-target_link_libraries(dibuli_lib ${libusb_LIBRARIES} imgui imgui_backend_glfw imgui_backend_opengl3 glfw glm::glm ${OPENGL_LIBRARIES} ${CSerialPort_LIBRARY})
+target_link_libraries(dibuli_lib ${libusb_LIBRARIES} imgui imgui_backend_glfw imgui_backend_opengl3 glfw glm::glm ${OPENGL_LIBRARIES} ${CSerialPort_LIBRARY} dprotocol)
 
 if (APPLE)
   target_link_libraries(dibuli_lib "-framework Foundation" "-framework IOKit")

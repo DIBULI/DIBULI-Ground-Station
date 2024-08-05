@@ -57,14 +57,42 @@ void MainView::view()
       ImGui::End();
 
       // Create status bar
-      ImGui::SetNextWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y * 0.96));
-      ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.04));
+      ImGui::SetNextWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y * 0.95));
+      ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.05));
       ImGui::Begin("Status Bar", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
 
+      float windowWidth = ImGui::GetContentRegionAvail().x;
+
+      ImGui::SetCursorPosX(windowWidth - 480);
+
       ImGui::Text("Available Serial Ports:");
-      for (const auto& port : appctx->serials) {
-          ImGui::SameLine();
-          ImGui::Text("%s", port.portName);
+      ImGui::SameLine();
+      ImGui::SetNextItemWidth(200.0f);
+      if (ImGui::BeginCombo("##listbox", appctx->serials[currentPortIndex].portName)) {
+        for (int i = 0; i < appctx->serials.size(); i++) {
+          bool isSelected = (currentPortIndex == i);
+          if (ImGui::Selectable( appctx->serials[i].portName, isSelected)) {
+            currentPortIndex = i;
+          }
+          if (isSelected) {
+              ImGui::SetItemDefaultFocus();
+          }
+        }
+        
+        
+        ImGui::EndCombo();
+      }
+
+      ImGui::SameLine();
+      ImGui::SetNextItemWidth(70.0f);
+      if (appctx->connectionConnected) {
+        if (ImGui::Button("Disconnect##port", ImVec2(100, 0))) {
+          appctx->disconnect();
+        }
+      } else {
+        if (ImGui::Button("Connect##port", ImVec2(100, 0))) {
+          appctx->connect(0, currentPortIndex);
+        }
       }
 
       ImGui::End();
