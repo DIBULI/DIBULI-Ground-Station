@@ -18,6 +18,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -O3")
 
 add_subdirectory(third_party)
+add_subdirectory(libs)
 
 set(GLM_DIR "${PROJECT_SOURCE_DIR}/third_party/glm/install")
 
@@ -65,9 +66,3 @@ if (WIN32)
   )
 
 endif()
-
-
-add_executable(circular_byte_array_test tests/test_circular_byte_array.cpp)
-target_link_libraries(circular_byte_array_test dibuli_lib)
-add_test(NAME TestCircularByteArray
-         COMMAND circular_byte_array_test)
