@@ -5,22 +5,12 @@ list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/third_party/eigen/install")
 list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/third_party/glfw/install")
 list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/third_party/glm/install")
 list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/third_party/eigen/install")
+list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/third_party/CSerialPort/install")
 
-# set libusb
-SET(libusb_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/third_party/libusb/include")
-SET(libusb_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/third_party/libusb/include" PARENT_SCOPE)
-
-if (WIN32)
-    add_library(libusb STATIC IMPORTED GLOBAL)
-    set_property(TARGET libusb PROPERTY
-                IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/third_party/libusb/libs/win32/libusb-1.0.a")
-else()
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(libusb REQUIRED libusb-1.0)
-endif()
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(cserialport REQUIRED)
 
 include_directories(imgui)
 include_directories(imgui/backends)

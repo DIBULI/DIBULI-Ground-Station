@@ -11,6 +11,7 @@ int main(int argv, char** argc) {
 
   appctx->pre_load();
   uictx->pre_load();
+  
   main_view->pre_view();
 
   main_view->view();

@@ -28,6 +28,7 @@ FILE(GLOB_RECURSE PROJECT_SOURCE_FILES
   src/contexts/**.cpp
   src/views/**.cpp
   src/structs/**.cpp
+  src/utils/**.cpp
 )
 
 add_library(dibuli_lib ${PROJECT_SOURCE_FILES})
@@ -36,13 +37,18 @@ target_include_directories(dibuli_lib PUBLIC
   include
   ${libusb_INCLUDE_DIRS}
   ${GLM_INCLUDE_DIRS}
+  ${CSerialPort_INCLUDE_DIR}
   
   third_party/imgui
   third_party/imgui/backends
 )
 
 find_package(OpenGL REQUIRED)
-target_link_libraries(dibuli_lib ${libusb_LIBRARIES} imgui imgui_backend_glfw imgui_backend_opengl3 glfw glm::glm ${OPENGL_LIBRARIES})
+target_link_libraries(dibuli_lib ${libusb_LIBRARIES} imgui imgui_backend_glfw imgui_backend_opengl3 glfw glm::glm ${OPENGL_LIBRARIES} ${CSerialPort_LIBRARY})
+
+if (APPLE)
+  target_link_libraries(dibuli_lib "-framework Foundation" "-framework IOKit")
+endif()
 
 add_executable(dibuli src/main.cpp)
 target_link_libraries(dibuli dibuli_lib)

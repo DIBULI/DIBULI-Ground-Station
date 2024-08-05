@@ -60,3 +60,17 @@ cmake -DCMAKE_INSTALL_PREFIX=${project_root_dir}/third_party/glfw/install -DGLFW
 cmake --build .
 cmake --install .
 
+# add cserialport
+cd ${project_root_dir}/third_party
+if [ ! -d "CSerialPort" ]; then
+  git clone git@github.com:itas109/CSerialPort.git
+  cd CSerialPort
+  git checkout c3e49fe
+fi
+
+cd ${project_root_dir}/third_party/CSerialPort
+rm -rf build install
+mkdir -p build && mkdir -p install && cd build
+cmake -DCMAKE_INSTALL_PREFIX=${project_root_dir}/third_party/CSerialPort/install -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release ..
+cmake --build .
+cmake --install .

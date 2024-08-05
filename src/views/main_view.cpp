@@ -43,6 +43,7 @@ void MainView::view()
     // 2. Show a simple window.
     {
       ImGui::Begin("Mocap", nullptr, windowFlags);
+      
       ImGui::BeginTabBar("MyTabBar", ImGuiTabBarFlags_None);
       if (ImGui::BeginTabItem("Dashboard")) {
         ImGui::Text("Dashboard");
@@ -52,6 +53,20 @@ void MainView::view()
         ImGui::EndTabItem();
       }
       ImGui::EndTabBar();
+
+      ImGui::End();
+
+      // Create status bar
+      ImGui::SetNextWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y * 0.96));
+      ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.04));
+      ImGui::Begin("Status Bar", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
+
+      ImGui::Text("Available Serial Ports:");
+      for (const auto& port : appctx->serials) {
+          ImGui::SameLine();
+          ImGui::Text("%s", port.portName);
+      }
+
       ImGui::End();
 
       // Rendering
