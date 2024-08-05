@@ -11,7 +11,11 @@
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
 #endif
-#include <GL/gl.h>
+#if defined(__APPLE__)
+#include <OpenGL/glu.h>
+#else
+#include <GL/glu.h>
+#endif
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 #include "dibuligs/contexts/icontext.hpp"
 
