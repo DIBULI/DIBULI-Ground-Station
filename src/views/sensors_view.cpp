@@ -73,6 +73,7 @@ void SensorView::storeImuData(float *data) {
 }
 
 void SensorView::clearBuffer() {
+  imuDataIndex.clear();
   imuAccXBuffer.clear();
   imuAccYBuffer.clear();
   imuAccZBuffer.clear();
