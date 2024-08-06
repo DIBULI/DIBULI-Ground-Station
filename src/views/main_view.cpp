@@ -47,7 +47,7 @@ void MainView::view()
 
     // 2. Show a simple window.
     {
-      ImGui::Begin("Mocap", nullptr, windowFlags);
+      ImGui::Begin("Ground Station", nullptr, windowFlags);
       
       ImGui::BeginTabBar("MyTabBar", ImGuiTabBarFlags_None);
       if (ImGui::BeginTabItem("Dashboard")) {

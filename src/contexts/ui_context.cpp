@@ -38,7 +38,7 @@ void UIContext::pre_load() {
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 
-  this->window = glfwCreateWindow(1280, 720, "Dibuli Mocap", nullptr, nullptr);
+  this->window = glfwCreateWindow(1280, 720, "DIBULI Ground Station", nullptr, nullptr);
   if (window == nullptr) {
       return;
   }
