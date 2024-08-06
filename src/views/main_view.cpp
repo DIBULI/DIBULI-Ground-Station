@@ -1,13 +1,18 @@
 #include "dibuligs/views/main_view.hpp"
 
 
-MainView::MainView(std::shared_ptr<ApplicationContext> appctx, std::shared_ptr<UIContext> uictx) : appctx(appctx),
-                                                                                                   uictx(uictx)
-{}
+MainView::MainView(std::shared_ptr<ApplicationContext> appctx, std::shared_ptr<UIContext> uictx) 
+: appctx(appctx),
+uictx(uictx), sensorView(appctx, uictx)
+{
+  
+}
 
 MainView::~MainView() {}
 
-void MainView::pre_view() {}
+void MainView::pre_view() {
+  sensorView.pre_view();
+}
 
 void MainView::view()
 {
@@ -49,8 +54,17 @@ void MainView::view()
         ImGui::Text("Dashboard");
         ImGui::EndTabItem();
       }
-      if (ImGui::BeginTabItem("Tab 2")) {
+      if (ImGui::BeginTabItem("Sensors")) {
+        if (!appctx->messageManager->requestIMUReading) {
+          sensorView.clearBuffer();
+          std::cout << "Start request imu data." << std::endl;
+          appctx->messageManager->requestIMUReading = true;
+        }
+        sensorView.view();
         ImGui::EndTabItem();
+      } else if (appctx->messageManager->requestIMUReading) {
+        std::cout << "Stop request imu data." << std::endl;
+        appctx->messageManager->requestIMUReading = false;
       }
       ImGui::EndTabBar();
 
@@ -68,10 +82,10 @@ void MainView::view()
       ImGui::Text("Available Serial Ports:");
       ImGui::SameLine();
       ImGui::SetNextItemWidth(200.0f);
-      if (ImGui::BeginCombo("##listbox", appctx->serials[currentPortIndex].portName)) {
-        for (int i = 0; i < appctx->serials.size(); i++) {
+      if (ImGui::BeginCombo("##listbox", appctx->messageManager->serials[currentPortIndex].portName)) {
+        for (int i = 0; i < appctx->messageManager->serials.size(); i++) {
           bool isSelected = (currentPortIndex == i);
-          if (ImGui::Selectable( appctx->serials[i].portName, isSelected)) {
+          if (ImGui::Selectable( appctx->messageManager->serials[i].portName, isSelected)) {
             currentPortIndex = i;
           }
           if (isSelected) {
@@ -85,13 +99,13 @@ void MainView::view()
 
       ImGui::SameLine();
       ImGui::SetNextItemWidth(70.0f);
-      if (appctx->connectionConnected) {
+      if (appctx->messageManager->connectionConnected) {
         if (ImGui::Button("Disconnect##port", ImVec2(100, 0))) {
-          appctx->disconnect();
+          appctx->messageManager->disconnect();
         }
       } else {
         if (ImGui::Button("Connect##port", ImVec2(100, 0))) {
-          appctx->connect(0, currentPortIndex);
+          appctx->messageManager->connect(0, currentPortIndex);
         }
       }
 
@@ -135,6 +149,7 @@ void MainView::after_first_view() {}
 void MainView::post_view()
 {
   this->uictx->post_run();
+  sensorView.post_view();
 }
 
 std::string MainView::get_name()

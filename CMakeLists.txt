@@ -29,6 +29,7 @@ FILE(GLOB_RECURSE PROJECT_SOURCE_FILES
   src/views/**.cpp
   src/structs/**.cpp
   src/utils/**.cpp
+  src/managers/**.cpp
 )
 
 add_library(dibuli_lib ${PROJECT_SOURCE_FILES})

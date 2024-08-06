@@ -27,7 +27,10 @@ ${IMGUI_PATH}/imgui.cpp
 ${IMGUI_PATH}/imgui_draw.cpp
 ${IMGUI_PATH}/imgui_demo.cpp 
 ${IMGUI_PATH}/imgui_tables.cpp 
-${IMGUI_PATH}/imgui_widgets.cpp) # Add all .cpp files of project root directory as source files
+${IMGUI_PATH}/imgui_widgets.cpp
+${IMGUI_PATH}/implot_demo.cpp
+${IMGUI_PATH}/implot_items.cpp
+${IMGUI_PATH}/implot.cpp) # Add all .cpp files of project root directory as source files
 
 
 add_library(imgui ${IMGUI_SOURCE_FILES})

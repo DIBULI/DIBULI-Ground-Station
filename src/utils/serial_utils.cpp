@@ -11,15 +11,16 @@ void SerialUtils::getAvailableSerialPorts(std::vector<itas109::SerialPortInfo> &
 
 void SerialUtils::onReadEvent(const char *portName, unsigned int readBufferLen) {
   if (readBufferLen > 0) {
-      char *data = new char[readBufferLen + 1]; // '\0'
+      uint8_t *data = new uint8_t[readBufferLen]; // '\0'
 
       if (data) {
           // read
           int recLen = p_sp->readData(data, readBufferLen);
 
           if (recLen > 0) {
-              data[recLen] = '\0';
-              printf("%s - Length: %d, Str: %s\n", portName, recLen, data);
+            if (p_cba->append(data, recLen) != 0) {
+              std::cerr << "Failed to append data to cba" << std::endl;
+            }
           }
 
           delete[] data;
@@ -27,4 +28,8 @@ void SerialUtils::onReadEvent(const char *portName, unsigned int readBufferLen) 
       }
   }
   return;
+}
+
+void SerialUtils::sendMessage(uint8_t *data, uint16_t size) {
+  p_sp->writeData(data, size);
 }

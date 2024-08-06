@@ -12,6 +12,17 @@ if [ ! -d "imgui" ]; then
   git checkout 3369cbd2776d7567ac198b1a3017a4fa2d547cc3
 fi
 
+# add imgui plot support
+cd ${project_root_dir}/third_party
+if [ ! -d "implot" ]; then
+  git clone git@github.com:epezent/implot.git
+  cd implot
+  git checkout f156599
+  cp *.h ../imgui
+  cp *.cpp ../imgui
+fi
+
+
 # compile eigen
 cd ${project_root_dir}/third_party
 if [ ! -d "eigen" ]; then

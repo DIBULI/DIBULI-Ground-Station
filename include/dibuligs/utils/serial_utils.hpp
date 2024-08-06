@@ -21,6 +21,8 @@ public:
 
   void onReadEvent(const char *portName, unsigned int readBufferLen);
 
+  void sendMessage(uint8_t *data, uint16_t size);
+
   itas109::CSerialPort *p_sp;
   CircularByteArray *p_cba;
 };
