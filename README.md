@@ -12,3 +12,9 @@ mkdir build && cd build
 cmake ..
 cmake --build .
 ```
+
+### How to launch the GUI
+
+```
+./build/dibuli
+```
