@@ -26,5 +26,7 @@ int main(int argv, char** argc) {
   appctx->post_run();
   uictx->post_run();
 
+  messageManager->destroy();
+
   return 0;
 }

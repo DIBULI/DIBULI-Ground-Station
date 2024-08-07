@@ -19,6 +19,8 @@ public:
 
   void init() override;
 
+  void destroy() override;
+
   void connect(uint8_t connectionType, int connectionIndex);
 
   void disconnect();
@@ -34,6 +36,7 @@ public:
   CircularByteArray *cba;
   DProtocal dprotocol;
   std::thread *handleMessageThread;
+  bool handlingMessage = false;
   
   // connection related
   int connectionType = 0;

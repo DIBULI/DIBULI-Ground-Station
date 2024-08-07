@@ -64,7 +64,6 @@ void UIContext::pre_load() {
 
 void UIContext::post_run() {
   ImPlot::DestroyContext();
-  ImGui::DestroyContext();
   glfwDestroyWindow(window);
   glfwTerminate();
 }

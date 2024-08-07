@@ -18,7 +18,13 @@ void MessageManager::init() {
   SerialUtils::getAvailableSerialPorts(serials);
 
   // start handling message
+  handlingMessage = true;
   handleMessageThread = new std::thread(&MessageManager::hanldeMessagTask, this);
+}
+
+void MessageManager::destroy() {
+  requestIMUReading = false;
+  handlingMessage = false;
 }
 
 void MessageManager::connect(uint8_t connectionType, int connectionIndex) {
@@ -59,7 +65,7 @@ void MessageManager::disconnect() {
 
 void MessageManager::hanldeMessagTask() {
   DProtocolMessage msg;
-  while(1) {
+  while(handlingMessage) {
     uint8_t ret = this->dprotocol.retrieveMessage(cba, &msg);
 
     if (ret == 0) {
@@ -72,6 +78,8 @@ void MessageManager::hanldeMessagTask() {
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
+  
+  std::cout << "Exiting handling message taks." << std::endl;
 }
 
 void MessageManager::process_message(DProtocolMessage msg) {
