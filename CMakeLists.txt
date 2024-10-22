@@ -7,8 +7,10 @@ enable_testing()
 list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/third_party/glfw/install")
 
 find_package(glfw3 REQUIRED)
+find_package(Vulkan REQUIRED)
 
 include_directories(
+  ${Vulkan_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
 )
 
@@ -23,6 +25,7 @@ add_subdirectory(libs)
 set(GLM_DIR "${PROJECT_SOURCE_DIR}/third_party/glm/install")
 
 find_package(glm CONFIG REQUIRED PATHS "${GLM_DIR}")
+find_package(glfw3 REQUIRED)
 
 FILE(GLOB_RECURSE PROJECT_SOURCE_FILES 
   src/contexts/**.cpp
@@ -32,29 +35,25 @@ FILE(GLOB_RECURSE PROJECT_SOURCE_FILES
   src/managers/**.cpp
 )
 
-add_library(dibuli_lib ${PROJECT_SOURCE_FILES})
-
-target_include_directories(dibuli_lib PUBLIC
+include_directories(
   include
   ${libusb_INCLUDE_DIRS}
   ${GLM_INCLUDE_DIRS}
+  ${GLFW_INCLUDE_DIR}
   ${CSerialPort_INCLUDE_DIR}
-
   libs/DProtocol/include
-  
   third_party/imgui
   third_party/imgui/backends
 )
 
 find_package(OpenGL REQUIRED)
-target_link_libraries(dibuli_lib ${libusb_LIBRARIES} imgui imgui_backend_glfw imgui_backend_opengl3 glfw glm::glm ${OPENGL_LIBRARIES} ${CSerialPort_LIBRARY} dprotocol)
+
+add_executable(dibuligs src/main.cpp ${PROJECT_SOURCE_FILES})
+target_link_libraries(dibuligs ${libusb_LIBRARIES} imgui imgui_backend_glfw imgui_backend_opengl3 glfw glm::glm ${OPENGL_LIBRARIES} ${CSerialPort_LIBRARY} dprotocol)
 
 if (APPLE)
-  target_link_libraries(dibuli_lib "-framework Foundation" "-framework IOKit")
+  target_link_libraries(dibuligs "-framework Foundation" "-framework IOKit")
 endif()
-
-add_executable(dibuli src/main.cpp)
-target_link_libraries(dibuli dibuli_lib)
 
 if (WIN32)
   add_custom_command(TARGET dibuli

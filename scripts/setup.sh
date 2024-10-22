@@ -9,8 +9,14 @@ cd ${project_root_dir}/third_party
 if [ ! -d "imgui" ]; then
   git clone https://github.com/ocornut/imgui.git
   cd imgui
-  git checkout 3369cbd2776d7567ac198b1a3017a4fa2d547cc3
+  git checkout c71e4e8c7cb9b42b460bbaedfa4bc443f885b05b
 fi
+
+cd ${project_root_dir}/third_party
+rm -rf implot
+git clone git@github.com:epezent/implot.git
+cd implot
+cp implot* ../imgui
 
 # add imgui plot support
 cd ${project_root_dir}/third_party

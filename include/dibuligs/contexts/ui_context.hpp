@@ -21,6 +21,12 @@
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 #include "dibuligs/contexts/icontext.hpp"
 
+#ifdef __APPLE__
+#define glGenVertexArrays glGenVertexArraysAPPLE
+#define glBindVertexArray glBindVertexArrayAPPLE
+#define glDeleteVertexArrays glDeleteVertexArraysAPPLE
+#endif
+
 class UIContext: public IContext {
 public:
   UIContext();
