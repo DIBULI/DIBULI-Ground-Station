@@ -27,9 +27,12 @@ public:
 
   void assignPointsPositions(std::vector<Eigen::Vector3d> points);
 
+  void drawAxis();
+
   std::mutex cameraDataUpdateMutex;
 
   GLuint fb, textureColorbuffer, rbo, shaderProgram, VAO, VBO;
+  GLuint axisVAO, axisVBO;
 
   float longitude = 0.0f;
   float latitude = 0.0f;

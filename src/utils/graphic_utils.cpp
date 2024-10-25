@@ -100,6 +100,9 @@ void GraphicUtils::getSphereVerticeData(Eigen::Vector3d pos, float radius, unsig
       vertices.push_back(xPos);
       vertices.push_back(yPos);
       vertices.push_back(zPos);
+      vertices.push_back(1.0f);
+      vertices.push_back(1.0f);
+      vertices.push_back(1.0f);
     }
   }
 

@@ -18,9 +18,15 @@ void SpaceView::pre_view() {
 		vertices.push_back(-5.0f);
 		vertices.push_back(y);
 		vertices.push_back(0.0f);
+		vertices.push_back(1.0f);
+		vertices.push_back(1.0f);
+		vertices.push_back(1.0f);
 		vertices.push_back(5.0f);
 		vertices.push_back(y);
 		vertices.push_back(0.0f);
+		vertices.push_back(1.0f);
+		vertices.push_back(1.0f);
+		vertices.push_back(1.0f);
 	}
 
 	for (int j = 0; j <= cols; ++j) {
@@ -28,19 +34,28 @@ void SpaceView::pre_view() {
 		vertices.push_back(x);
 		vertices.push_back(-5.0f);
 		vertices.push_back(0.0f);
+		vertices.push_back(1.0f);
+		vertices.push_back(1.0f);
+		vertices.push_back(1.0f);
 		vertices.push_back(x);
 		vertices.push_back(5.0f);
 		vertices.push_back(0.0f);
+		vertices.push_back(1.0f);
+		vertices.push_back(1.0f);
+		vertices.push_back(1.0f);
 	}
 
 	const GLchar* vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 position;\n"
+		"layout (location = 1) in vec3 color;\n"
+		"out vec3 fragColor;\n"
 		"uniform mat4 model;\n"
 		"uniform mat4 view;\n"
 		"uniform mat4 projection;\n"
     "void main()\n"
     "{\n"
-    "gl_Position = projection * view * model * vec4(position.x, position.y, position.z, 1.0);\n"
+		"    fragColor = color;\n"
+    "    gl_Position = projection * view * model * vec4(position.x, position.y, position.z, 1.0);\n"
     "}\0";
 
 	GLuint vertexShader;
@@ -57,10 +72,11 @@ void SpaceView::pre_view() {
 	}
 
 	const GLchar* fragmentShaderSource = "#version 330 core\n"
-		"out vec4 FragColor;\n"
+		"in vec3 fragColor;\n"
+		"out vec4 color;\n"
 		"void main()\n"
 		"{\n"
-		"	FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
+		"	color = vec4(fragColor, 1.0f);\n"
 		"}\0";
 
 	GLuint fragmentShader;
@@ -90,8 +106,11 @@ void SpaceView::pre_view() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);  
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 	
 	glBindVertexArray(VBO);
 
@@ -126,6 +145,37 @@ void SpaceView::pre_view() {
 	
 	glBindVertexArray(0);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	float axisLength = 3.0f;
+	GLfloat axisVertices[] = {
+		0.0f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+		axisLength, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+
+		0.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+		0.0f, axisLength, 0.0f,  0.0f, 1.0f, 0.0f,
+
+		0.0f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, axisLength,  0.0f, 0.0f, 1.0f
+	};
+
+	glGenVertexArrays(1, &axisVAO);
+	glGenBuffers(1, &axisVBO);
+	glBindVertexArray(axisVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, axisVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(axisVertices), axisVertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
 void SpaceView::view() {
@@ -258,7 +308,9 @@ void SpaceView::view() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, pointIndices[pointIdx].size() * sizeof(unsigned int), pointIndices[pointIdx].data(), GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(GLfloat)));
 
 		glBindVertexArray(pointsVAO[pointIdx]);
 		glDrawElements(GL_TRIANGLE_STRIP, pointIndices[pointIdx].size(), GL_UNSIGNED_INT, 0);
@@ -281,6 +333,28 @@ void SpaceView::view() {
 			}
 		}
 	}
+
+	glDisable(GL_DEPTH_TEST);
+
+	glViewport(10, 10, 200, 200);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, 200, 0, 200, -1, 1);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glBindVertexArray(axisVAO);
+	glDrawArrays(GL_LINES, 0, 6);
+	glBindVertexArray(0);
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_DEPTH_TEST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
@@ -326,4 +400,43 @@ void SpaceView::assignPointsPositions(std::vector<Eigen::Vector3d> points) {
 	for (int pointIdx = 0; pointIdx < points.size(); pointIdx++) {
 		GraphicUtils::getSphereVerticeData(points[pointIdx], glCameraSphereRadius, 10, 10, pointVertices[pointIdx], pointIndices[pointIdx]);
 	}
+}
+
+void SpaceView::drawAxis() {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glOrtho(0, 800, 0, 600, -1, 1);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glTranslatef(50, 50, 0);
+
+	float axisLength = 30.0f;
+
+	glBegin(GL_LINES);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(axisLength, 0.0f, 0.0f);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, axisLength, 0.0f);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, axisLength);
+	glEnd();
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
 }
