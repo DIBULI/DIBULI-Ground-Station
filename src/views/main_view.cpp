@@ -3,15 +3,17 @@
 
 MainView::MainView(std::shared_ptr<ApplicationContext> appctx, std::shared_ptr<UIContext> uictx) 
 : appctx(appctx),
-uictx(uictx), sensorView(appctx, uictx)
+uictx(uictx), 
+sensorView(appctx, uictx)
 {
-  
+  this->mapView=std::make_unique<MapView>(appctx, uictx);
 }
 
 MainView::~MainView() {}
 
 void MainView::pre_view() {
   sensorView.pre_view();
+  mapView->pre_view();
 }
 
 void MainView::view()
@@ -32,7 +34,6 @@ void MainView::view()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
 
     // Create the docking environment
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
@@ -66,6 +67,10 @@ void MainView::view()
         std::cout << "Stop request imu data." << std::endl;
         appctx->messageManager->requestIMUReading = false;
       }
+      if (ImGui::BeginTabItem("Maps")) {
+        mapView->view();
+        ImGui::EndTabItem();
+      }
       ImGui::EndTabBar();
 
       ImGui::End();
@@ -93,7 +98,6 @@ void MainView::view()
           }
         }
         
-        
         ImGui::EndCombo();
       }
 
@@ -108,6 +112,9 @@ void MainView::view()
           appctx->messageManager->connect(0, currentPortIndex);
         }
       }
+
+      // bool show = true;
+      // ImGui::ShowMetricsWindow(&show);
 
       ImGui::End();
 
@@ -125,10 +132,10 @@ void MainView::view()
       //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
       ImGuiIO& io = ImGui::GetIO(); (void)io;
       if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-          GLFWwindow* backup_current_context = glfwGetCurrentContext();
-          ImGui::UpdatePlatformWindows();
-          ImGui::RenderPlatformWindowsDefault();
-          glfwMakeContextCurrent(backup_current_context);
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        glfwMakeContextCurrent(backup_current_context);
       }
 
       glfwSwapBuffers(uictx->window);
@@ -150,6 +157,7 @@ void MainView::post_view()
 {
   this->uictx->post_run();
   sensorView.post_view();
+  mapView->post_view();
 }
 
 std::string MainView::get_name()

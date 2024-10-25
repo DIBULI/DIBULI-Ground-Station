@@ -8,6 +8,7 @@ list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/third_party/glfw/install")
 
 find_package(glfw3 REQUIRED)
 find_package(Vulkan REQUIRED)
+find_package(eigen3 REQUIRED)
 
 include_directories(
   ${Vulkan_INCLUDE_DIRS}
@@ -49,7 +50,8 @@ include_directories(
 find_package(OpenGL REQUIRED)
 
 add_executable(dibuligs src/main.cpp ${PROJECT_SOURCE_FILES})
-target_link_libraries(dibuligs ${libusb_LIBRARIES} imgui imgui_backend_glfw imgui_backend_opengl3 glfw glm::glm ${OPENGL_LIBRARIES} ${CSerialPort_LIBRARY} dprotocol)
+target_link_libraries(dibuligs ${libusb_LIBRARIES} imgui imgui_backend_glfw imgui_backend_opengl3
+glfw glm::glm ${OPENGL_LIBRARIES} ${CSerialPort_LIBRARY} dprotocol)
 
 if (APPLE)
   target_link_libraries(dibuligs "-framework Foundation" "-framework IOKit")

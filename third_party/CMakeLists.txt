@@ -30,7 +30,8 @@ ${IMGUI_PATH}/imgui_tables.cpp
 ${IMGUI_PATH}/imgui_widgets.cpp
 ${IMGUI_PATH}/implot_demo.cpp
 ${IMGUI_PATH}/implot_items.cpp
-${IMGUI_PATH}/implot.cpp) # Add all .cpp files of project root directory as source files
+${IMGUI_PATH}/implot.cpp
+${IMGUI_PATH}/ImGuiFileDialog.cpp) # Add all .cpp files of project root directory as source files
 
 
 add_library(imgui ${IMGUI_SOURCE_FILES})
@@ -50,12 +51,18 @@ if(${BUILD_BACKEND_GLFW})
     endif()
 endif()
 
-set(BACKEND_FILE ${IMGUI_PATH}/backends/imgui_impl_opengl3.cpp)
-add_library(imgui_backend_opengl3 ${BACKEND_FILE})
+set(OPENGL_BACKEND_FILE ${IMGUI_PATH}/backends/imgui_impl_opengl3.cpp)
+add_library(imgui_backend_opengl3 ${OPENGL_BACKEND_FILE})
 target_link_libraries(imgui_backend_opengl3 imgui)
-set(EXAMPLE_MAIN_FILE ${IMGUI_PATH}/examples/example_glfw_opengl3/main.cpp)
-add_executable(example_glfw_opengl3 ${EXAMPLE_MAIN_FILE})
+set(VULKAN_BACKEND_FILE ${IMGUI_PATH}/backends/imgui_impl_vulkan.cpp)
+add_library(imgui_backend_vulkan ${VULKAN_BACKEND_FILE})
+target_link_libraries(imgui_backend_vulkan imgui ${Vulkan_LIBRARIES})
+set(OPENGL_EXAMPLE_MAIN_FILE ${IMGUI_PATH}/examples/example_glfw_opengl3/main.cpp)
+add_executable(example_glfw_opengl3 ${OPENGL_EXAMPLE_MAIN_FILE})
 target_link_libraries(example_glfw_opengl3 imgui imgui_backend_glfw imgui_backend_opengl3 glfw ${OPENGL_LIBRARIES})
+set(VULKAN_EXAMPLE_MAIN_FILE ${IMGUI_PATH}/examples/example_glfw_vulkan/main.cpp)
+add_executable(example_glfw_vulkan ${VULKAN_EXAMPLE_MAIN_FILE})
+target_link_libraries(example_glfw_vulkan imgui imgui_backend_glfw imgui_backend_vulkan glfw ${Vulkan_LIBRARIES})
 
 
 if (WIN32)

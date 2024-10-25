@@ -91,3 +91,19 @@ mkdir -p build && mkdir -p install && cd build
 cmake -DCMAKE_INSTALL_PREFIX=${project_root_dir}/third_party/CSerialPort/install -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release ..
 cmake --build .
 cmake --install .
+
+
+
+cd ${project_root_dir}/third_party
+if [ ! -d "ImGuiFileDialog" ]; then
+  git clone https://github.com/aiekick/ImGuiFileDialog.git
+  cd ImGuiFileDialog
+  git checkout f73e29fca08163fdcbd1e58fb7b67c7e56f5fa2e
+  cp *.h ../imgui
+  cp *.cpp ../imgui
+fi
+
+cd -
+
+
+

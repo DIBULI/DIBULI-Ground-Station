@@ -1,21 +1,24 @@
-#ifndef MAIN_VIEW_HPP
-#define MAIN_VIEW_HPP
+#ifndef MAP_VIEW_HPP
+#define MAP_VIEW_HPP
+
+#include <chrono>
+#include <iomanip>
+#include <ctime>
 
 #include "imgui_internal.h"
-#include <memory>
-
+#include "ImGuiFileDialog.h"
 #include "dibuligs/views/iview.hpp"
+
 #include "dibuligs/contexts/application_context.hpp"
 #include "dibuligs/contexts/ui_context.hpp"
 
-#include "dibuligs/views/sensors_view.hpp"
-#include "dibuligs/views/map/map_view.hpp"
+#include "dibuligs/views/map/space_view.hpp"
 
-class MainView: public IView{
+class MapView : public IView{
 public:
-  MainView(std::shared_ptr<ApplicationContext> appctx,
+  MapView(std::shared_ptr<ApplicationContext> appctx,
            std::shared_ptr<UIContext> uictx);
-  ~MainView();
+  ~MapView();
 
   void pre_view() override;
   void view() override;
@@ -23,16 +26,10 @@ public:
   void post_view() override;
   std::string get_name() override;
 
-  void processInput();
-
   std::shared_ptr<ApplicationContext> appctx;
   std::shared_ptr<UIContext> uictx;
 
-  //views
-  SensorView sensorView;
-  std::unique_ptr<MapView> mapView;
-
-  int currentPortIndex = 0;
+  std::unique_ptr<SpaceView> spaceView;
 };
 
-#endif /* MAIN_VIEW_HPP */
+#endif /* MAP_VIEW_HPP */

@@ -10,6 +10,7 @@ third_party/glfw
 third_party/imgui
 third_party/implot
 third_party/CSerialPort
+third_party/ImGuiFileDialog
 
 **.DS_Store**
 
