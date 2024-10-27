@@ -142,6 +142,8 @@ void SpaceView::pre_view() {
 	cameraCenter = glm::vec3(0.0, 0.0, 0.0);
 	upAxis = glm::vec3(0.0, 1.0, 0.0);
 	projection = glm::perspective(glm::radians(50.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+	viewMat = glm::lookAt(cameraPosition, cameraCenter, upAxis);
 	
 	glBindVertexArray(0);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -197,7 +199,8 @@ void SpaceView::view() {
 	glm::vec3 rayDirection;
 	bool mouseInSpaceview = false;
 	
-	if (ImGui::IsMousePosValid(&io.MousePos) && 
+	if (ImGui::IsWindowFocused() &&
+		ImGui::IsMousePosValid(&io.MousePos) && 
 		io.MousePos.x >= vMin.x && io.MousePos.x <= vMax.x &&
 		io.MousePos.y >= vMin.y && io.MousePos.y <= vMax.y) {
 			mouseInSpaceview = true;
@@ -222,14 +225,14 @@ void SpaceView::view() {
 				glm::mat4 rotation1 = glm::rotate(rotationMatrix, offsetY, cameraLeftAxis);
 				rotationMatrix = glm::rotate(rotation1, offsetX, upAxis);
 
-				upAxis = glm::vec3(rotationMatrix[1]);
+				upAxis = glm::vec3(rotationMatrix[0]);
 				cameraPosition = cameraCenter + glm::vec3(rotationMatrix[2]) * cameraViewSphereRadius;
 
 				mousePositionXRightMouse = io.MousePos.x;
 				mousePositionYRightMouse = io.MousePos.y;
 			} if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
 				isLeftMouseDown = false;
-			}else if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+			} else if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
 				isRightMouseDown = false;
 				if (!isLeftMouseDown) {
 					isLeftMouseDown = true;
@@ -271,7 +274,6 @@ void SpaceView::view() {
 
 			rayDirection = glm::normalize(farWorld - nearWorld);
 	}
-	
 
   GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -282,11 +284,9 @@ void SpaceView::view() {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fb);
 	glViewport(0, 0, 800, 600);
-	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glBindVertexArray(VAO);
-	glColor3f(1.0f, 0.0f, 0.0f);
 	glDrawArrays(GL_LINES, 0, 22 * 2);
 	glBindVertexArray(0);
 
@@ -294,7 +294,7 @@ void SpaceView::view() {
 	Eigen::Vector3d eigenRayDirection(rayDirection.x, rayDirection.y, rayDirection.z);
 
 	double cloestDistance = 888888888888888.0f;
-	int cloestPointId = -1;
+	chosenPointId = -1;
 
 	for (int pointIdx = 0; pointIdx < pointsVAO.size(); pointIdx++) {
     glGenVertexArrays(1, &pointsVAO[pointIdx]);
@@ -328,7 +328,7 @@ void SpaceView::view() {
 			double discriminant = b * b - 4.0f * a * c;
 
 			if (distance < cloestDistance && discriminant >= 0) {
-				cloestPointId = pointIdx;
+				chosenPointId = pointIdx;
 				cloestDistance = distance;
 			}
 		}
@@ -362,12 +362,6 @@ void SpaceView::view() {
   ImGui::Image((void*)(intptr_t)textureColorbuffer, ImVec2(vMax.x - vMin.x, vMax.y - vMin.y), ImVec2(0, 0), ImVec2(1, 1));
 	
 	ImGui::EndChild();
-
-	if (cloestPointId != -1) {
-		ImGui::Text("Cloest point id: %d", cloestPointId);
-	}
-	ImGui::Text("mouseX: %d", mouseX);
-	ImGui::Text("mouseY: %d", mouseY);
 }
 
 void SpaceView::after_first_view() {}

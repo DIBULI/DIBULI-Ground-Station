@@ -67,6 +67,8 @@ public:
   bool isLeftMouseDown = false;
   float mousePositionXLeftMouse;
   float mousePositionYLeftMouse;
+
+  int chosenPointId = -1;
 };
 
 

@@ -26,6 +26,8 @@ public:
   void post_view() override;
   std::string get_name() override;
 
+  void loadPLYFile(std::string filePathName, std::string filePath);
+
   std::shared_ptr<ApplicationContext> appctx;
   std::shared_ptr<UIContext> uictx;
 
